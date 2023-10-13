@@ -13,7 +13,6 @@ class Router {
     this.#routes = [];
     this.#prefix = _prefix ? undefined : '';
   }
-
   get(path, handler) {
     this.#routes.push({ method: 'GET', path: this.#prefix + path, handler });
     return this;
@@ -33,17 +32,33 @@ class Router {
     this.#routes.push({ method: 'DELETE', path: this.#prefix + path, handler });
     return this;
   }
-
-  routes() {
+  routes(_prefix) {  
+    if (_prefix) {
+      const routesAux = this.#routes; 
+      this.#routes = []; 
+      this.#prefix = _prefix.prefix;
+      for (const route of routesAux) {
+        this.#routes.push({
+          method: route.method,
+          path: this.#prefix + route.path,
+          handler: route.handler,
+        });
+      }
+    }    
     return (req, res) => {
       const route = this.#routes.find((route) => {
         return route.method === req.method && this.matchPath(route.path, req.url);
       });
 
       if (route) {
-        req.params = this.extractParams(route.path, req.url);
-        route.handler(req, res);        
-        res.end();        
+        try {
+          req.params = this.extractParams(route.path, req.url);
+          route.handler(req, res);        
+          res.end();
+        } catch (error) {     
+          res.statusCode = error.statusCode;
+          res.end(error.message);           
+        }
       } else {
         res.statusCode = 404;
         res.end('Check the route');
