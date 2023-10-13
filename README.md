@@ -125,3 +125,5 @@ Good luck! :rocket:
 - [COPY ./src . ] - Copia o diretório /src do projeto para o diretório /app no docker.
 - [EXPOSE 3000] - O container passa a expor a aplicação na porta 3000.
 - [CMD ["node", "index.js"]] - Aqui é definido o comando que será executa assim que o container iniciar.
+
+-localhost:3000/,localhost:3000/:documentId, localhost:3000/:documentId, localhost:3000/throw-error
